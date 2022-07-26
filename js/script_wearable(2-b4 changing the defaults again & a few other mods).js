@@ -11,7 +11,6 @@ log = function(str) {
 
 var bluetoothDevice;
 var dataCharacteristic;
-var flgDebug = false;
 
 //checks to see if web bluetooth is enabled
 function isWebBluetoothEnabled() {
@@ -103,7 +102,7 @@ function connectDeviceAndCacheCharacteristics() {
 
  //handles reading inputs from pins and updating variable
 function handleDormioIncomingData(event) {
-  if(flgDebug) log("Reading Dormio Data...");
+  log("Reading Dormio Data...");
   
   //read from pins
   let valFLEX = event.target.value.getUint32(0, true);
@@ -230,12 +229,12 @@ var wakeups = 0;
 var defaults = {
   //this Default section is only for the numeric fields
   "loops" : 3,
-  "hypna-latency" : 5, //default was 3
-  "time-until-sleep-min" : 15, //default was 10
-  "time-until-sleep-max" : 30, //default was 20
-  "time-between-sleep" : 10, //default was 7
-  "calibration-time" : 2, //default was 3
-  "recording-time" : 60, //default was 30
+  "hypna-latency" : 4, //default was 3
+  "time-until-sleep-min" : 10,
+  "time-until-sleep-max" : 20,
+  "time-between-sleep" : 7,
+  "calibration-time" : 1, //default was 3
+  "recording-time" : 30,
   "delta-eda" : 4,
   "delta-flex": 5,
   "delta-hr": 6
@@ -504,7 +503,7 @@ $("#start_session").click(function() {
     nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
 
     fileReadOutput = $("#dream-subject").val() + "||||" + nowDate + "\n";
-    fileParseOutput = $("#dream-subject").val();
+    fileParseOutput = $("#dream-subject").val() + "||||"
 
     //parse time between sleep and convert to seconds
     var timeBetweenSleepMin = parseInt($("#time-between-sleep").val());
@@ -587,7 +586,7 @@ function updateMeans() {
   //if lists with all stats and bpm are 0, do nothing
   if (bigBuffer.length == 0 || bpmBuffer.length == 0) {
 	if(!flgOnce){
-		if(flgDebug) console.log("updatedMeans: Buffer seems to be empty");
+		console.log("updatedMeans: Buffer seems to be empty");
 		flgOnce=true;
 	}
     return
@@ -651,13 +650,14 @@ function endCalibrating() {
     countdownTimer = null;
   }
 
-  //play prompt again playPrompt();
-  gong.play(); //play the gong instead to indicate Session has started
+    //play prompt again
+  playPrompt();
 
   minTime = parseInt($('#time-until-sleep-min').val());
   maxTime = parseInt($('#time-until-sleep-max').val());
 
       if ((isNaN(+(minTime))) || (isNaN(+(maxTime)))) {
+
          startDetectSleepOnset();
          console.log("one or both are empty");
       } else{
@@ -810,7 +810,7 @@ function playPrompt(){
   log("playPrompt");
 
     //play prompt again
-	if (sleep_msg_recording != null) {
+		if (sleep_msg_recording != null) {
       sleep_msg_player = new Audio(sleep_msg_recording.url)
       sleep_msg_player.play()
     }
@@ -959,7 +959,6 @@ function endSession() {
    $("#calibrate").hide();
    $("#stop_session").hide();
    $("#start_session").show();
-   $("#start-button-container").show();
 
   recording = false;
 
@@ -968,7 +967,7 @@ function endSession() {
   fileReadOutput += "-------------------------------\nSession End: " + nowTime;
 
   //zip folders
-  var prefix = $("#dream-subject").val() +  "_"+new Date().toISOString();
+  var prefix = $("#dream-subject").val()
   var zip = new JSZip();
   var audioZipFolder = zip.folder("audioRecordings")
   zip.file(prefix + ".raw.read.txt", fileReadOutput);
@@ -1214,20 +1213,20 @@ function startRecording(filename, mode = "dream") {
       if (mode == "wakeup") {
         wakeup_msg_recording = audioRecording
         console.log("wakeup_msg_recording is now: ", wakeup_msg_recording)
-        if(debug) new Audio(audioRecording.url).play()
+        new Audio(audioRecording.url).play()
       } else if (mode == "sleep") {
         sleep_msg_recording = audioRecording
-        if(debug) console.log("sleep_msg_recording is now: ", sleep_msg_recording)
+        console.log("sleep_msg_recording is now: ", sleep_msg_recording)
         new Audio(audioRecording.url).play()
       } else {
         console.log("pushed new dream recording: ", audioRecording)
         audio_recordings.push(audioRecording);
       }
   }
-    recorder.startRecording();
-    console.log("Audio Recording Started");
+      recorder.startRecording();
+  console.log("Audio Recording Started");
   }).catch(function(err) {
-    console.log("error", err);
+  console.log("error", err);
   });
 }
 
@@ -1236,6 +1235,7 @@ function stopRecording() {
     gumStream.getAudioTracks()[0].stop();
     //tell the recorder to finish the recording (stop recording + encode the recorded audio)
     recorder.finishRecording();
+
     console.log("Audio Recording Stopped");
 }
 
