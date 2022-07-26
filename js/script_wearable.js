@@ -315,7 +315,7 @@ $(function(){
   $("#calibrate").hide();
   $("#stop_session").hide();
 
-    $("#opener").click(function() {
+  $("#opener").click(function() {
     openForm();
   });
 
@@ -349,23 +349,14 @@ $(function(){
     }
   });
 
-     //when play-sleep button is clicked, do this
-  $('#play-sleep').click(function() {
-
-    playPrompt();
-
-  });
-
+  /*
   //when play-sleep button is clicked, do this
-  $('#play-wakeup').click(function() {
-
-    playWakeup();
-
-  });
-
+  $('#play-sleep').click(function()	{ playPrompt(); });
+  //when play-sleep button is clicked, do this
+  $('#play-wakeup').click(function(){ playWakeup(); });
+  */
 
  //make record sleep buttons work
-
     $("#record-sleep-message").click(function() {
 
     if(!is_recording_sleep) {
@@ -522,7 +513,7 @@ $("#start_session").click(function() {
 
     $("#start_session").hide();
     $("#calibrate").show();
-      startCalibrating();
+    startCalibrating();
     $("#stop_session").show();
     });
 
