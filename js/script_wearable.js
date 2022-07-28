@@ -37,8 +37,8 @@ function requestDevice() {
        0x2902,
        0x2901,
        "6e400001-b5a3-f393-e0a9-e50e24dcca9e", //Dormio UART service
-	   "6e400003-b5a3-f393-e0a9-e50e24dcca9e"  //TX real-time Data
-       "6e400002-b5a3-f393-e0a9-e50e24dcca9e", //RX (not used)
+	   "6e400003-b5a3-f393-e0a9-e50e24dcca9e", //TX real-time Data
+       "6e400002-b5a3-f393-e0a9-e50e24dcca9e"  //RX (not used)
 	   ]
 	})
   .then(device => {
