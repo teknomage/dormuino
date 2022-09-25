@@ -171,7 +171,29 @@ function handleDormioIncomingData(event) {
     }
   }
 }
-//-------------------------------------------
+
+//---------------------------------------------------------------------------------
+function onResetButtonClick() {
+  if (dataCharacteristic) {
+    dataCharacteristic.removeEventListener('characteristicvaluechanged', handleDormioIncomingData);
+    dataCharacteristic.stopNotifications()
+    dataCharacteristic = null;
+  }
+  // Note that it doesn't disconnect device.
+  bluetoothDevice = null;
+  log('> Bluetooth Device reset');
+}
+
+//---------------------------------------------------------------------------------
+function onDisconnected() {
+  log('> Bluetooth Device disconnected');
+  connectDeviceAndCacheCharacteristics()
+  .catch(error => {
+    log('onDisconnection error" ' + error);
+  });
+}
+
+//=================================================================================
 function addSign(x, mean) {
   var ret = x - mean;
   if (ret > 0) {
@@ -196,29 +218,9 @@ function setBPM(_bpm) {
   }
 }
 
-//---------------------------------------------------------------------------------
-function onResetButtonClick() {
-  if (dataCharacteristic) {
-    dataCharacteristic.removeEventListener('characteristicvaluechanged', handleDormioIncomingData);
-    dataCharacteristic.stopNotifications()
-    dataCharacteristic = null;
-  }
-  // Note that it doesn't disconnect device.
-  bluetoothDevice = null;
-  log('> Bluetooth Device reset');
-}
-
-//---------------------------------------------------------------------------------
-function onDisconnected() {
-  log('> Bluetooth Device disconnected');
-  connectDeviceAndCacheCharacteristics()
-  .catch(error => {
-    log('onDisconnection error" ' + error);
-  });
-}
-
-//=================================================================================
+//-------------------------------------------
 //declare vars
+
 var fileReadOutput = "";
 var fileParseOutput = "";
 
@@ -228,11 +230,11 @@ var wakeups = 0;
 var defaults = {
   //this Default section is only for the numeric fields
   "loops" : 3,
-  "hypna-latency" : 7, //default was 3
-  "time-until-sleep-min" : 20, //default was 10
-  "time-until-sleep-max" : 45, //default was 20
-  "time-between-sleep" : 15, //default was 7
-  "calibration-time" : 10, //default was 3
+  "hypna-latency" : 5, //default was 3
+  "time-until-sleep-min" : 15, //default was 10
+  "time-until-sleep-max" : 30, //default was 20
+  "time-between-sleep" : 10, //default was 7
+  "calibration-time" : 2, //default was 3
   "recording-time" : 60, //default was 30
   "delta-eda" : 4,
   "delta-flex": 5,
@@ -254,21 +256,12 @@ var loops;
 var recording = false;
 var isConnected = false;
 
-var audio_recordings = [];
-var is_recording_wake = true;
-var is_recording_sleep = true;
-var sleep_msg_recording, wakeup_msg_recording;
-//We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.mp3');
-console.log("Setting default Sleep recording to: ", sleep_msg_recording)
-//test recording => new Audio(sleep_msg_recording.url).play()
-wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.mp3');
-console.log("Setting default Sleep recording to: ", wakeup_msg_recording)
-//Setting button backgrounds to show that default recordings have been loaded
-document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
-document.getElementById("record-wakeup-message").style.background = "rgba(0, 0, 255, 0.3)";
+var wakeup_msg_recording, sleep_msg_recording;
+var audio_recordings = []
 
-//-------------------------------------------
+var is_recording_wake = false;
+var is_recording_sleep = false;
+
 var flex = 0,
     hr = 0,
     oldHr = 0,
@@ -1204,7 +1197,7 @@ function startRecording(filename, mode = "dream") {
       }
   });
 
-  
+
    recorder.onComplete = function(recorder, blob) {
       console.log("Recording.onComplete called")
       audioRecording = getAudio(blob, recorder.encoding, filename);
