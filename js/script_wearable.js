@@ -265,8 +265,8 @@ console.log("Setting default Sleep recording to: ", sleep_msg_recording)
 wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.mp3');
 console.log("Setting default Sleep recording to: ", wakeup_msg_recording)
 //Setting button backgrounds to show that default recordings have been loaded
-document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
-document.getElementById("record-wakeup-message").style.background = "rgba(0, 0, 255, 0.3)";
+//document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
+//document.getElementById("record-wakeup-message").style.background = "rgba(0, 0, 255, 0.3)";
 
 //-------------------------------------------
 var flex = 0,
