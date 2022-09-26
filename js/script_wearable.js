@@ -642,8 +642,11 @@ function endCalibrating() {
   }
 
   //play prompt again playPrompt();
-  console.log("Gong URL => " + gong.url);
+  console.log("endCalibration: playing tracks");
   gong.play(); //play the gong instead to indicate Session has started
+  sleep_msg_recording.play(); 
+  wakeup_msg_recording.play(); 
+  
 
   minTime = parseInt($('#time-until-sleep-min').val());
   maxTime = parseInt($('#time-until-sleep-max').val());
