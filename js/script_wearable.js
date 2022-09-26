@@ -1230,10 +1230,10 @@ function stopRecording() {
     //tell the recorder to finish the recording (stop recording + encode the recorded audio)
     recorder.finishRecording();
     console.log("Audio Recording Stopped");
-  }.catch(function(err) {
+  }/*.catch(function(err) {
     console.log("error", err);
   });
-
+  */
 }
 
 function getAudio(blob, encoding, filename) {
