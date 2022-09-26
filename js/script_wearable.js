@@ -642,11 +642,9 @@ function endCalibrating() {
   }
 
   //play prompt again playPrompt();
-  console.log("endCalibration: playing tracks");
+  console.log("endCalibration: playing Gong");
   gong.play(); //play the gong instead to indicate Session has started
-  sleep_msg_recording.play(); 
-  wakeup_msg_recording.play(); 
-  
+  //-----------
 
   minTime = parseInt($('#time-until-sleep-min').val());
   maxTime = parseInt($('#time-until-sleep-max').val());
@@ -798,9 +796,9 @@ function endDetectSleepOnset(){
 }
 
 function playPrompt(){
-
   log("playPrompt");
-
+	
+	play("/audio/defaultHypnaSleepMsg.mp3");
     //play prompt again
 	if (sleep_msg_recording != null) {
 	  console.log("Sleep Msg URL => " + sleep_msg_recording.url);
@@ -816,9 +814,9 @@ function playPrompt(){
 }
 
 function playWakeup(){
-  log("playWakeup, setting Wakeup to Gong");
+  log("playWakeup");
   
-	wakeup_msg_recording = gong;
+	play("/audio/defaultWakeupMsg.mp3");
     //play prompt again
     if (wakeup_msg_recording != null) {
 	  console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
