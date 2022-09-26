@@ -798,7 +798,7 @@ function endDetectSleepOnset(){
 function playPrompt(){
   log("playPrompt");
 	
-	play("/audio/defaultHypnaSleepMsg.mp3");
+	play("audio/defaultHypnaSleepMsg.mp3");
     //play prompt again
 	if (sleep_msg_recording != null) {
 	  console.log("Sleep Msg URL => " + sleep_msg_recording.url);
