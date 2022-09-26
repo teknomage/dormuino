@@ -1029,7 +1029,7 @@ function playWakeup(){
  
     //play prompt again
     if (wakeup_msg_recording != null) {
-	  if(sleep_msg_recording == "defaultWakeupMsg.mp3"){ //play the default WakeUp msg if this variable has been specifically set to defaultWakeupMsg
+	  if(wakeup_msg_recording == "defaultWakeupMsg.mp3"){ //play the default WakeUp msg if this variable has been specifically set to defaultWakeupMsg
 		play("audio/defaultWakeupMsg.mp3");
 		
 	  } else { //otherwise, if wakeup msg is an Object, then play it via Audio 
