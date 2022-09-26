@@ -350,11 +350,11 @@ $(function(){
   
   
   //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-  sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.wav');
+  sleep_msg_recording = new Audio('audio/sleep.mp3'); //defaultHypnaSleepMsg.wav
   console.log("Setting default Sleep recording to: ", sleep_msg_recording);
   sleep_msg_recording.play();
   //test recording => new Audio(sleep_msg_recording.url).play()
-  wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.wav');
+  wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
   console.log("Setting default Sleep recording to: ", wakeup_msg_recording);
   wakeup_msg_recording.play();
 
@@ -792,10 +792,8 @@ function detectSleepOnset(){
 
 function endDetectSleepOnset(){
 
-  playPrompt();
-
-
-     console.log("start hypna latency");
+	playPrompt();
+	console.log("start hypna latency");
 
     nextWakeupTimer = setTimeout(function() {
       runHypnaLatency();
@@ -811,7 +809,8 @@ function playPrompt(){
 	if (sleep_msg_recording != null) {
       sleep_msg_player = new Audio(sleep_msg_recording.url)
       sleep_msg_player.play()
-    }
+    } else 
+		log("sleep_msg_recording is null");
 
     nowDateObj = new Date();
     nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
@@ -827,7 +826,8 @@ function playWakeup(){
     if (wakeup_msg_recording != null) {
       wakeup_msg_player = new Audio(wakeup_msg_recording.url)
       wakeup_msg_player.play()
-    }
+    } else 
+		log("wakeup_msg_recording is null");
 
     nowDateObj = new Date();
     nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
