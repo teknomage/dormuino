@@ -260,16 +260,6 @@ var is_recording_wake = true;
 var is_recording_sleep = true;
 var sleep_msg_recording, wakeup_msg_recording;
 
-  //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-  sleep_msg_recording = new Audio('audio/sleep.mp3'); //defaultHypnaSleepMsg.wav
-  console.log("Setting default Sleep recording to: ", sleep_msg_recording);
-  console.log("Sleep Msg URL => ", sleep_msg_recording.url);
-  if(flgDebug) sleep_msg_recording.play();
-  //test recording => new Audio(sleep_msg_recording.url).play()
-  wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
-  console.log("Setting default Sleep recording to: ", wakeup_msg_recording);
-  console.log("Sleep Msg URL => ", wakeup_msg_recording.url);
-  if(flgDebug) wakeup_msg_recording.play();
 
 //-------------------------------------------
 var flex = 0,
@@ -1011,10 +1001,22 @@ function endSession() {
   }
 }
 
-var g, width, height;
+//=================================================================================================================
+
+  //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
+  sleep_msg_recording = new Audio('audio/sleep.mp3'); //defaultHypnaSleepMsg.wav
+  console.log("Setting default Sleep recording to: ", sleep_msg_recording);
+  console.log("Sleep Msg URL => ", sleep_msg_recording.url);
+  if(flgDebug) sleep_msg_recording.play();
+  //test recording => new Audio(sleep_msg_recording.url).play()
+  wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
+  console.log("Setting default Sleep recording to: ", wakeup_msg_recording);
+  console.log("Sleep Msg URL => ", wakeup_msg_recording.url);
+  if(flgDebug) wakeup_msg_recording.play();
 
 var gongs = 0;
 var gong = new Audio('audio/gong.wav');
+console.log("Gong loaded, URL => ", gong.url);
 gong.addEventListener('ended',function() {
   gongs += 1;
   if (gongs < 3) {
@@ -1022,6 +1024,8 @@ gong.addEventListener('ended',function() {
   }
 })
 
+
+var g, width, height;
 //plot stuff
   var n = 1000,
       dataFlex = d3.range(n).map(() => {return 0;});
