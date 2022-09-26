@@ -1,4 +1,5 @@
 var flgDebug = false; //use this only to get more detailed debug info or actions
+var flgOnce = false; //this is for displaying updatedMeans specifically
 
 //function for logging to console with time/date
 log = function(str) {
@@ -571,8 +572,7 @@ function startCalibrating() {
 }
 
 function updateMeans() {
-  log("updatedMeans");
-  var flgOnce;
+  if(flgDebug) log("updatedMeans");
   
   //if lists with all stats and bpm are 0, do nothing
   if (bigBuffer.length == 0 || bpmBuffer.length == 0) {
