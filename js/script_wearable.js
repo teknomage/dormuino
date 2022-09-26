@@ -258,15 +258,6 @@ var audio_recordings = [];
 var is_recording_wake = true;
 var is_recording_sleep = true;
 var sleep_msg_recording, wakeup_msg_recording;
-//We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.mp3');
-console.log("Setting default Sleep recording to: ", sleep_msg_recording)
-//test recording => new Audio(sleep_msg_recording.url).play()
-wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.mp3');
-console.log("Setting default Sleep recording to: ", wakeup_msg_recording)
-//Setting button backgrounds to show that default recordings have been loaded
-//document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
-//document.getElementById("record-wakeup-message").style.background = "rgba(0, 0, 255, 0.3)";
 
 //-------------------------------------------
 var flex = 0,
@@ -355,16 +346,20 @@ $(function(){
       isConnected = !isConnected;
     }
   });
-
-  /*
-  //when play-sleep button is clicked, do this
-  $('#play-sleep').click(function()	{ playPrompt(); });
-  //when play-sleep button is clicked, do this
-  $('#play-wakeup').click(function(){ playWakeup(); });
-  */
-
- //make record sleep buttons work
-    $("#record-sleep-message").click(function() {
+  
+  
+  //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
+  sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.mp3');
+  console.log("Setting default Sleep recording to: ", sleep_msg_recording)
+  //test recording => new Audio(sleep_msg_recording.url).play()
+  wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.mp3');
+  console.log("Setting default Sleep recording to: ", wakeup_msg_recording)
+  //Setting button backgrounds to show that default recordings have been loaded
+  //document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
+  //document.getElementById("record-wakeup-message").style.background = "rgba(0, 0, 255, 0.3)";
+  
+  //make record sleep buttons work
+  $("#record-sleep-message").click(function() {
 
     if(!is_recording_sleep) {
       console.log("starting to record sleep message");
@@ -379,8 +374,10 @@ $(function(){
       stopRecording();
       is_recording_sleep = false;
     }
-     });
-
+  });
+	
+	//when play-sleep button is clicked, do this
+    $('#play-sleep').click(function()	{ playPrompt(); });
     $("#listen-sleep-message").click(function() {
 	  playPrompt();
     });
@@ -390,7 +387,7 @@ $(function(){
     });
 
   //make record wakeup buttons work
-   $("#record-wakeup-message").click(function() {
+  $("#record-wakeup-message").click(function() {
     if(!is_recording_wake) {
       console.log("starting to record wake message");
       document.getElementById("record-wakeup-message").style.background = "rgba(255, 0, 0, 0.3)";
@@ -405,8 +402,10 @@ $(function(){
     }
   });
 
+  //when play-sleep button is clicked, do this
+  $('#play-wakeup').click(function(){ playWakeup(); });
   $("#listen-wakeup-message").click(function() {
-        if(wakeup_msg_recording != null){
+    if(wakeup_msg_recording != null){
       wakeup_msg_player = new Audio(wakeup_msg_recording.url)
       wakeup_msg_player.play()
     }
@@ -1163,13 +1162,9 @@ document.addEventListener('keydown', function (event) {
 
 
 var gumStream; //stream from getUserMedia()
-
 var recorder; //WebAudioRecorder object
-
 var input; //MediaStreamAudioSourceNode we'll be recording var encodingType;
-
 var encodeAfterRecord = true; // waits until recording is finished before encoding to mp3
-
 var audioContext;//new audio context to help us record
 
 function startRecording(filename, mode = "dream") {
@@ -1181,7 +1176,6 @@ function startRecording(filename, mode = "dream") {
 
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
    audioContext  = new AudioContext;
-
    gumStream = stream;
    /* use the stream */
    input = audioContext.createMediaStreamSource(stream);
@@ -1230,11 +1224,16 @@ function startRecording(filename, mode = "dream") {
 }
 
 function stopRecording() {
+  if(gumStream){
     //stop microphone access
     gumStream.getAudioTracks()[0].stop();
     //tell the recorder to finish the recording (stop recording + encode the recorded audio)
     recorder.finishRecording();
     console.log("Audio Recording Stopped");
+  }.catch(function(err) {
+    console.log("error", err);
+  });
+
 }
 
 function getAudio(blob, encoding, filename) {
