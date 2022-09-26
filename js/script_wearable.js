@@ -230,11 +230,11 @@ var defaults = {
   //this Default section is only for the numeric fields
   "loops" : 3,
   "hypna-latency" : 7, //default was 3
-  "time-until-sleep-min" : 20, //default was 10
+  "time-until-sleep-min" : 30, //default was 10
   "time-until-sleep-max" : 45, //default was 20
   "time-between-sleep" : 15, //default was 7
   "calibration-time" : 10, //default was 3
-  "recording-time" : 60, //default was 30
+  "recording-time" : 200, //default was 30
   "delta-eda" : 4,
   "delta-flex": 5,
   "delta-hr": 6
@@ -350,10 +350,10 @@ $(function(){
   
   
   //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-  sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.mp3');
+  sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.wav');
   console.log("Setting default Sleep recording to: ", sleep_msg_recording)
   //test recording => new Audio(sleep_msg_recording.url).play()
-  wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.mp3');
+  wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.wav');
   console.log("Setting default Sleep recording to: ", wakeup_msg_recording)
   //Setting button backgrounds to show that default recordings have been loaded
   //document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
@@ -406,10 +406,7 @@ $(function(){
   //when play-sleep button is clicked, do this
   $('#play-wakeup').click(function(){ playWakeup(); });
   $("#listen-wakeup-message").click(function() {
-    if(wakeup_msg_recording != null){
-      wakeup_msg_player = new Audio(wakeup_msg_recording.url)
-      wakeup_msg_player.play()
-    }
+    playWakeup(); 
   });
 
   $("#clear-wakeup-message").click(function() {
@@ -1210,8 +1207,8 @@ function startRecording(filename, mode = "dream") {
         if(flgDebug) new Audio(audioRecording.url).play()
       } else if (mode == "sleep") {
         sleep_msg_recording = audioRecording
-        if(flgDebug) console.log("sleep_msg_recording is now: ", sleep_msg_recording)
-        new Audio(audioRecording.url).play()
+        console.log("sleep_msg_recording is now: ", sleep_msg_recording)
+        if(flgDebug) new Audio(audioRecording.url).play()
       } else {
         console.log("pushed new dream recording: ", audioRecording)
         audio_recordings.push(audioRecording);
