@@ -813,7 +813,7 @@ function playPrompt(){
 }
 
 function playWakeup(){
-  log("playWakeup");
+  log("playWakeup, setting Wakeup to Gong");
   
 	wakeup_msg_recording = gong;
     //play prompt again
@@ -1025,9 +1025,99 @@ gong.addEventListener('ended',function() {
     gong.play()
   }
 })
-gong.play();
+if(flgDebug) gong.play();
 
-//--------------------------------------------------------------
+
+//-------------------------- REAL-TIME AUDIO RECORDER & STREAM HANDLER -------------------------- 
+var gumStream; //stream from getUserMedia()
+var recorder; //WebAudioRecorder object
+var input; //MediaStreamAudioSourceNode we'll be recording var encodingType;
+var encodeAfterRecord = true; // waits until recording is finished before encoding to mp3
+var audioContext;//new audio context to help us record
+
+function startRecording(filename, mode = "dream") {
+
+  var constraints = {
+      audio: true,
+      video: false
+  }
+
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+   audioContext  = new AudioContext;
+   gumStream = stream;
+   /* use the stream */
+   input = audioContext.createMediaStreamSource(stream);
+   //stop the input from playing back through the speakers
+   //input.connect(audioContext.destination) //get the encoding
+   //disable the encoding selector
+   recorder = new WebAudioRecorder(input, {
+       workerDir: "js/",
+       encoding: "mp3",
+   });
+
+   recorder.setOptions({
+      timeLimit: 480,
+      encodeAfterRecord: encodeAfterRecord,
+      ogg: {
+          quality: 0.5
+      },
+      mp3: {
+          bitRate: 160
+      }
+  });
+
+  
+   recorder.onComplete = function(recorder, blob) {
+      console.log("Recording.onComplete called")
+      audioRecording = getAudio(blob, recorder.encoding, filename);
+
+      if (mode == "wakeup") {
+        wakeup_msg_recording = audioRecording
+        console.log("wakeup_msg_recording is now: ", wakeup_msg_recording)
+        if(flgDebug) new Audio(audioRecording.url).play()
+      } else if (mode == "sleep") {
+        sleep_msg_recording = audioRecording
+        console.log("sleep_msg_recording is now: ", sleep_msg_recording)
+        if(flgDebug) new Audio(audioRecording.url).play()
+      } else {
+        console.log("pushed new dream recording: ", audioRecording)
+        audio_recordings.push(audioRecording);
+      }
+  }
+    recorder.startRecording();
+    console.log("Audio Recording Started");
+  }).catch(function(err) {
+    console.log("error", err);
+  });
+}
+
+function stopRecording() {
+  if(gumStream){
+    //stop microphone access
+    gumStream.getAudioTracks()[0].stop();
+    //tell the recorder to finish the recording (stop recording + encode the recorded audio)
+    recorder.finishRecording();
+    console.log("Audio Recording Stopped");
+  }/*.catch(function(err) {
+    console.log("error", err);
+  });
+  */
+}
+
+function getAudio(blob, encoding, filename) {
+    var url = URL.createObjectURL(blob);
+    console.log("filename is:", filename )
+    // audioZip.file(filename, blob);
+    audioRecording = {"blob":blob, "encoding": encoding, "filename":filename, "url":url}
+    return audioRecording;
+}
+
+//Plays the sound
+function play(url) {
+  new Audio(url).play();
+}
+
+//===========================================================================================
 var g, width, height;
 //plot stuff
   var n = 1000,
@@ -1170,94 +1260,6 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-
-var gumStream; //stream from getUserMedia()
-var recorder; //WebAudioRecorder object
-var input; //MediaStreamAudioSourceNode we'll be recording var encodingType;
-var encodeAfterRecord = true; // waits until recording is finished before encoding to mp3
-var audioContext;//new audio context to help us record
-
-function startRecording(filename, mode = "dream") {
-
-  var constraints = {
-      audio: true,
-      video: false
-  }
-
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-   audioContext  = new AudioContext;
-   gumStream = stream;
-   /* use the stream */
-   input = audioContext.createMediaStreamSource(stream);
-   //stop the input from playing back through the speakers
-   //input.connect(audioContext.destination) //get the encoding
-   //disable the encoding selector
-   recorder = new WebAudioRecorder(input, {
-       workerDir: "js/",
-       encoding: "mp3",
-   });
-
-   recorder.setOptions({
-      timeLimit: 480,
-      encodeAfterRecord: encodeAfterRecord,
-      ogg: {
-          quality: 0.5
-      },
-      mp3: {
-          bitRate: 160
-      }
-  });
-
-  
-   recorder.onComplete = function(recorder, blob) {
-      console.log("Recording.onComplete called")
-      audioRecording = getAudio(blob, recorder.encoding, filename);
-
-      if (mode == "wakeup") {
-        wakeup_msg_recording = audioRecording
-        console.log("wakeup_msg_recording is now: ", wakeup_msg_recording)
-        if(flgDebug) new Audio(audioRecording.url).play()
-      } else if (mode == "sleep") {
-        sleep_msg_recording = audioRecording
-        console.log("sleep_msg_recording is now: ", sleep_msg_recording)
-        if(flgDebug) new Audio(audioRecording.url).play()
-      } else {
-        console.log("pushed new dream recording: ", audioRecording)
-        audio_recordings.push(audioRecording);
-      }
-  }
-    recorder.startRecording();
-    console.log("Audio Recording Started");
-  }).catch(function(err) {
-    console.log("error", err);
-  });
-}
-
-function stopRecording() {
-  if(gumStream){
-    //stop microphone access
-    gumStream.getAudioTracks()[0].stop();
-    //tell the recorder to finish the recording (stop recording + encode the recorded audio)
-    recorder.finishRecording();
-    console.log("Audio Recording Stopped");
-  }/*.catch(function(err) {
-    console.log("error", err);
-  });
-  */
-}
-
-function getAudio(blob, encoding, filename) {
-    var url = URL.createObjectURL(blob);
-    console.log("filename is:", filename )
-    // audioZip.file(filename, blob);
-    audioRecording = {"blob":blob, "encoding": encoding, "filename":filename, "url":url}
-    return audioRecording;
-}
-
-//Plays the sound
-function play(url) {
-  new Audio(url).play();
-}
 
 function openForm() {
   $("#other").hide();
