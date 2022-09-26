@@ -642,6 +642,7 @@ function endCalibrating() {
   }
 
   //play prompt again playPrompt();
+  console.log("Gong URL => " + gong.url);
   gong.play(); //play the gong instead to indicate Session has started
 
   minTime = parseInt($('#time-until-sleep-min').val());
@@ -799,6 +800,7 @@ function playPrompt(){
 
     //play prompt again
 	if (sleep_msg_recording != null) {
+	  console.log("Sleep Msg URL => " + sleep_msg_recording.url);
       sleep_msg_player = new Audio(sleep_msg_recording.url)
       sleep_msg_player.play()
     } else 
@@ -816,6 +818,7 @@ function playWakeup(){
 
     //play prompt again
     if (wakeup_msg_recording != null) {
+	  console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
       wakeup_msg_player = new Audio(wakeup_msg_recording.url)
       wakeup_msg_player.play()
     } else 
