@@ -1002,21 +1002,20 @@ function endSession() {
 }
 
 //=================================================================================================================
-
-  //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-  sleep_msg_recording = new Audio('audio/sleep.mp3'); //defaultHypnaSleepMsg.wav
-  console.log("Setting default Sleep recording to: ", sleep_msg_recording);
-  console.log("Sleep Msg URL => ", sleep_msg_recording.url);
-  if(flgDebug) sleep_msg_recording.play();
-  //test recording => new Audio(sleep_msg_recording.url).play()
-  wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
-  console.log("Setting default WakeUp recording to: ", wakeup_msg_recording);
-  console.log("WakeUp Msg URL => ", wakeup_msg_recording.url);
-  if(flgDebug) wakeup_msg_recording.play();
+//AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
+sleep_msg_recording = new Audio('audio/sleep.mp3'); //defaultHypnaSleepMsg.wav
+console.log("Setting default Sleep recording to: ", sleep_msg_recording);
+console.log("Sleep Msg URL => " + sleep_msg_recording.url);
+if(flgDebug) sleep_msg_recording.play(); //test recording => new Audio(sleep_msg_recording.url).play()
+  
+wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
+console.log("Setting default WakeUp recording to: ", wakeup_msg_recording);
+console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
+if(flgDebug) wakeup_msg_recording.play();
 
 var gongs = 0;
 var gong = new Audio('audio/gong.wav');
-console.log("Gong loaded, URL => ", gong.url);
+console.log("Gong loaded, URL => " + gong.url);
 gong.addEventListener('ended',function() {
   gongs += 1;
   if (gongs < 3) {
