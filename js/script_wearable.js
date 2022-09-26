@@ -813,9 +813,9 @@ function playPrompt(){
 }
 
 function playWakeup(){
-
   log("playWakeup");
-
+  
+	wakeup_msg_recording = gong;
     //play prompt again
     if (wakeup_msg_recording != null) {
 	  console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
@@ -1025,8 +1025,9 @@ gong.addEventListener('ended',function() {
     gong.play()
   }
 })
+gong.play();
 
-
+//--------------------------------------------------------------
 var g, width, height;
 //plot stuff
   var n = 1000,
