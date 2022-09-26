@@ -1010,8 +1010,8 @@ function endSession() {
   if(flgDebug) sleep_msg_recording.play();
   //test recording => new Audio(sleep_msg_recording.url).play()
   wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
-  console.log("Setting default Sleep recording to: ", wakeup_msg_recording);
-  console.log("Sleep Msg URL => ", wakeup_msg_recording.url);
+  console.log("Setting default WakeUp recording to: ", wakeup_msg_recording);
+  console.log("WakeUp Msg URL => ", wakeup_msg_recording.url);
   if(flgDebug) wakeup_msg_recording.play();
 
 var gongs = 0;
