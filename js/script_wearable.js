@@ -351,10 +351,13 @@ $(function(){
   
   //AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
   sleep_msg_recording = new Audio('audio/defaultHypnaSleepMsg.wav');
-  console.log("Setting default Sleep recording to: ", sleep_msg_recording)
+  console.log("Setting default Sleep recording to: ", sleep_msg_recording);
+  sleep_msg_recording.play();
   //test recording => new Audio(sleep_msg_recording.url).play()
   wakeup_msg_recording = new Audio('audio/defaultWakeupMsg.wav');
-  console.log("Setting default Sleep recording to: ", wakeup_msg_recording)
+  console.log("Setting default Sleep recording to: ", wakeup_msg_recording);
+  wakeup_msg_recording.play();
+
   //Setting button backgrounds to show that default recordings have been loaded
   //document.getElementById("record-sleep-message").style.background =  "rgba(0, 0, 255, 0.3)";
   //document.getElementById("record-wakeup-message").style.background = "rgba(0, 0, 255, 0.3)";
