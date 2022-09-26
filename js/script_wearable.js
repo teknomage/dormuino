@@ -1,3 +1,5 @@
+var flgDebug = false; //use this only to get more detailed debug info or actions
+
 //function for logging to console with time/date
 log = function(str) {
   console.log('[' + new Date().toUTCString() + '] ' + str);
@@ -8,10 +10,8 @@ log = function(str) {
 //        bluetooth functions for connecting
 //
 //===================================================
-
 var bluetoothDevice;
 var dataCharacteristic;
-var flgDebug = false;
 
 //checks to see if web bluetooth is enabled
 function isWebBluetoothEnabled() {
@@ -219,6 +219,7 @@ function onDisconnected() {
 
 //=================================================================================
 //declare vars
+
 var fileReadOutput = "";
 var fileParseOutput = "";
 
@@ -1206,10 +1207,10 @@ function startRecording(filename, mode = "dream") {
       if (mode == "wakeup") {
         wakeup_msg_recording = audioRecording
         console.log("wakeup_msg_recording is now: ", wakeup_msg_recording)
-        if(debug) new Audio(audioRecording.url).play()
+        if(flgDebug) new Audio(audioRecording.url).play()
       } else if (mode == "sleep") {
         sleep_msg_recording = audioRecording
-        if(debug) console.log("sleep_msg_recording is now: ", sleep_msg_recording)
+        if(flgDebug) console.log("sleep_msg_recording is now: ", sleep_msg_recording)
         new Audio(audioRecording.url).play()
       } else {
         console.log("pushed new dream recording: ", audioRecording)
