@@ -1,5 +1,5 @@
 var flgDebug = false; //use this only to get more detailed debug info or actions
-var flgOnce = false; //this is for displaying updatedMeans specifically
+var flgOnce, flgFirstRun=true; //these are for keeping track of first instances
 
 //function for logging to console with time/date
 log = function(str) {
@@ -259,9 +259,37 @@ var isConnected = false;
 var audio_recordings = [];
 var is_recording_wake = true;
 var is_recording_sleep = true;
-var sleep_msg_recording, wakeup_msg_recording;
 
+//AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recording them manually every time!
+var sleep_msg_recording = "defaultHypnaSleepMsg.mp3"; // => new Audio('audio/defaultHypnaSleepMsg.mp3');
+//The initial idea was to load up the defaultHypnaSleepMsg prompt into this variable and then play it whenever called. //But for some reason, the .play() method does not work if you initialize it as an Audio object, so we're going to use a simple string to identify the Sleep & WakeUp msgs
+console.log("Setting default Sleep recording to: ", sleep_msg_recording);
+if(flgDebug){
+  console.log("Sleep Msg URL => " + sleep_msg_recording.url);
+  sleep_msg_recording.play(); //test recording => new Audio(sleep_msg_recording.url).play()
+}
+  
+var wakeup_msg_recording = "defaultWakeupMsg.mp3"; // => new Audio('audio/defaultWakeupMsg.mp3'); //defaultWakeupMsg.wav
+console.log("Setting default WakeUp recording to: ", wakeup_msg_recording);
+if(flgDebug){
+  console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
+  wakeup_msg_recording.play();
+}
 
+//Gong to indicate start and end of the session
+var gongs = 0;
+var gong = new Audio('audio/gong.wav');
+gong.addEventListener('ended',function() {
+  gongs += 1;
+  if (gongs < 3) {
+    gong.play()
+  }
+})
+if(flgDebug){
+  gong.play();
+  console.log("Gong loaded, URL => " + gong.url);
+}
+	
 //-------------------------------------------
 var flex = 0,
     hr = 0,
@@ -523,7 +551,7 @@ $("#start_session").click(function() {
 
 //calibrate
 function startCalibrating() {
-
+ 
   //record calibrate event onto files
   if (recording) {
     nowDateObj = new Date();
@@ -580,7 +608,7 @@ function updateMeans() {
 		if(flgDebug) console.log("updatedMeans: Buffer seems to be empty");
 		flgOnce=true;
 	}
-    return
+    return;
   }
 
   tmpEDA = 0;
@@ -795,41 +823,6 @@ function endDetectSleepOnset(){
 
 }
 
-function playPrompt(){
-  log("playPrompt");
-	
-	play("audio/defaultHypnaSleepMsg.mp3");
-    //play prompt again
-	if (sleep_msg_recording != null) {
-	  console.log("Sleep Msg URL => " + sleep_msg_recording.url);
-      sleep_msg_player = new Audio(sleep_msg_recording.url)
-      sleep_msg_player.play()
-    } else 
-		log("sleep_msg_recording is null");
-
-    nowDateObj = new Date();
-    nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
-
-    fileReadOutput += "EVENT, go to sleep recording played| " + nowTime + "\n";
-}
-
-function playWakeup(){
-  log("playWakeup");
-  
-	play("/audio/defaultWakeupMsg.mp3");
-    //play prompt again
-    if (wakeup_msg_recording != null) {
-	  console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
-      wakeup_msg_player = new Audio(wakeup_msg_recording.url)
-      wakeup_msg_player.play()
-    } else 
-		log("wakeup_msg_recording is null");
-
-    nowDateObj = new Date();
-    nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
-
-    fileReadOutput += "EVENT, wakeup played| " + nowTime + "\n";
-}
 
 function duringSleep(){
 
@@ -1003,33 +996,56 @@ function endSession() {
   if (nextWakeupTimer) {
     clearTimeout(nextWakeupTimer)
   }
+  
+  if(flgFirstRun) flgFirstRun=false;
 }
 
 //=================================================================================================================
-//AUDIO Sleep & WakeUp Messages: We are going to load up default recordings for the Sleep & WakeUp msgs, so that we wont have to waste time recoding them manually every time!
-sleep_msg_recording = new Audio('audio/sleep.mp3'); //defaultHypnaSleepMsg.wav
-console.log("Setting default Sleep recording to: ", sleep_msg_recording);
-console.log("Sleep Msg URL => " + sleep_msg_recording.url);
-if(flgDebug) sleep_msg_recording.play(); //test recording => new Audio(sleep_msg_recording.url).play()
-  
-wakeup_msg_recording = new Audio('audio/wakeup.mp3'); //defaultWakeupMsg.wav
-console.log("Setting default WakeUp recording to: ", wakeup_msg_recording);
-console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
-if(flgDebug) wakeup_msg_recording.play();
+// AUDIO PLAYBACK & STREAMING FUNCTIONS
 
-var gongs = 0;
-var gong = new Audio('audio/gong.wav');
-console.log("Gong loaded, URL => " + gong.url);
-gong.addEventListener('ended',function() {
-  gongs += 1;
-  if (gongs < 3) {
-    gong.play()
-  }
-})
-if(flgDebug) gong.play();
+function playPrompt(){
+  log("playPrompt");
 
+    //play prompt again
+	if (sleep_msg_recording != null){
+	  if(sleep_msg_recording == "defaultHypnaSleepMsg.mp3"){ //play the default Sleep msg if this variable has been specifically set to defaultHypnaSleepMsg
+		play("audio/defaultHypnaSleepMsg.mp3");
+		
+	  } else { //otherwise, if sleep msg is an Object, then play it via Audio 
+	    console.log("Sleep Msg URL => " + sleep_msg_recording.url);
+        sleep_msg_player = new Audio(sleep_msg_recording.url)
+        sleep_msg_player.play()
+	  }
+    } else 
+	  if(flgDebug) log("sleep_msg_recording is null");
 
-//-------------------------- REAL-TIME AUDIO RECORDER & STREAM HANDLER -------------------------- 
+    nowDateObj = new Date();
+    nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
+    fileReadOutput += "EVENT, go to sleep recording played| " + nowTime + "\n";
+}
+
+function playWakeup(){
+  log("playWakeup");
+ 
+    //play prompt again
+    if (wakeup_msg_recording != null) {
+	  if(sleep_msg_recording == "defaultWakeupMsg.mp3"){ //play the default WakeUp msg if this variable has been specifically set to defaultWakeupMsg
+		play("audio/defaultWakeupMsg.mp3");
+		
+	  } else { //otherwise, if wakeup msg is an Object, then play it via Audio 
+		console.log("WakeUp Msg URL => " + wakeup_msg_recording.url);
+		wakeup_msg_player = new Audio(wakeup_msg_recording.url)
+		wakeup_msg_player.play()
+	  }
+    } else 
+	  if(flgDebug) log("wakeup_msg_recording is null");
+
+    nowDateObj = new Date();
+    nowTime = nowDateObj.getHours() + ":" + nowDateObj.getMinutes() + ":" + nowDateObj.getSeconds();
+    fileReadOutput += "EVENT, wakeup played| " + nowTime + "\n";
+}
+
+//========================== REAL-TIME AUDIO RECORDER & STREAM HANDLER -------------------------- 
 var gumStream; //stream from getUserMedia()
 var recorder; //WebAudioRecorder object
 var input; //MediaStreamAudioSourceNode we'll be recording var encodingType;
@@ -1118,9 +1134,10 @@ function play(url) {
   new Audio(url).play();
 }
 
-//===========================================================================================
-var g, width, height;
+//=================================================================================================================
 //plot stuff
+var g, width, height;
+
   var n = 1000,
       dataFlex = d3.range(n).map(() => {return 0;});
       dataHR = d3.range(n).map(() => {return 0;});
